@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adekani | Interactive Pricing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F1E5AC;
+            --dark-surface: #121417;
+            --dark-card: #1C1F26;
+            --text-muted: #94A3B8;
+        }
+
+        body {
+            background-color: var(--dark-surface);
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .gold-border {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .gold-border-active {
+            border: 2px solid var(--gold) !important;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .gold-text {
+            color: var(--gold);
+        }
+
+        .gold-bg {
+            background-color: var(--gold);
+        }
+
+        .glass-panel {
+            background: var(--dark-card);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <img src="logo.png" alt="Adekani Logo" class="h-16 mx-auto mb-6" onerror="this.src='https://via.placeholder.com/200x60?text=ADEKANI'">
+            <h1 class="font-serif text-3xl md:text-5xl mb-4">Get The Cost of Your <span class="gold-text">Real Estate Website</span></h1>
+            <p class="text-text-muted text-lg max-w-xl mx-auto">Choose the details of how you want your website.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Side: Selection -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Section 1: Pages -->
+                <section class="glass-panel p-6 md:p-8 gold-border">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="w-8 h-8 rounded-full gold-bg text-dark-surface flex items-center justify-center font-bold">1</span>
+                        <h2 class="text-xl font-semibold">Number of Pages</h2>
+                    </div>
+                    <p class="text-text-muted mb-6 text-sm">How many pages will your website require? (e.g., Home, About, Contact, Services)</p>
+                    <div class="flex items-center gap-4 bg-black/20 p-4 rounded-xl w-fit">
+                        <button onclick="changePages(-1)" class="w-12 h-12 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-2xl">-</button>
+                        <input type="number" id="pageCount" value="1" min="1" class="bg-transparent text-center w-16 text-2xl font-bold focus:outline-none" readonly>
+                        <button onclick="changePages(1)" class="w-12 h-12 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-2xl">+</button>
+                    </div>
+                </section>
+
+                <!-- Section 2: Domains -->
+                <section class="glass-panel p-6 md:p-8 gold-border">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="w-8 h-8 rounded-full gold-bg text-dark-surface flex items-center justify-center font-bold">2</span>
+                        <h2 class="text-xl font-semibold">Domain Name Extension</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="domainOptions">
+                        <div onclick="selectDomain('.com', 30000, this)" class="domain-card p-4 rounded-xl gold-border cursor-pointer hover:bg-white/5 transition-all">
+                            <h3 class="font-bold text-lg">.com</h3>
+                            <p class="text-text-muted text-sm">₦30,000 / year</p>
+                        </div>
+                        <div onclick="selectDomain('.com.ng', 20000, this)" class="domain-card p-4 rounded-xl gold-border cursor-pointer hover:bg-white/5 transition-all">
+                            <h3 class="font-bold text-lg">.com.ng</h3>
+                            <p class="text-text-muted text-sm">₦20,000 / year</p>
+                        </div>
+                        <div onclick="selectDomain('.pages.dev', 0, this)" class="domain-card p-4 rounded-xl gold-border cursor-pointer hover:bg-white/5 transition-all">
+                            <h3 class="font-bold text-lg">.pages.dev</h3>
+                            <p class="text-text-muted text-sm text-green-400">FREE</p>
+                        </div>
+                        <div onclick="selectDomain('Already Owned', 0, this)" class="domain-card p-4 rounded-xl gold-border cursor-pointer hover:bg-white/5 transition-all">
+                            <h3 class="font-bold text-lg">I have a domain</h3>
+                            <p class="text-text-muted text-sm">₦0 cost</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Catalog -->
+                <section class="glass-panel p-6 md:p-8 gold-border">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="w-8 h-8 rounded-full gold-bg text-dark-surface flex items-center justify-center font-bold">3</span>
+                        <h2 class="text-xl font-semibold">Property Listings Catalog</h2>
+                    </div>
+                    <p class="text-text-muted mb-6 text-sm">Do you want a dedicated system to showcase and manage your property listings?</p>
+                    
+                    <div class="flex gap-4">
+                        <button id="catalogYes" onclick="openCatalogModal()" class="flex-1 py-4 rounded-xl gold-border hover:bg-white/5 transition-all font-medium">YES <span class="text-text-muted mb-6 text-xs">(+₦10,000)</span></button>
+                        <button id="catalogNo" onclick="toggleCatalog(false)" class="flex-1 py-4 rounded-xl gold-border hover:bg-white/5 transition-all font-medium gold-border-active">NO</button>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Right Side: Summary Card -->
+            <div class="lg:col-span-1">
+                <div class="glass-panel p-6 md:p-8 gold-border sticky top-8">
+                    <h2 class="font-serif text-2xl mb-6">Price Summary</h2>
+                    
+                    <div class="space-y-4 mb-8 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">Pages (<span id="summaryPages">1</span>)</span>
+                            <span id="pricePages">₦30,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">Domain (<span id="summaryDomain">None</span>)</span>
+                            <span id="priceDomain">₦0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">Catalog System</span>
+                            <span id="priceCatalog">₦0</span>
+                        </div>
+                        <hr class="border-white/10">
+                        <div class="flex justify-between text-xl font-bold">
+                            <span>Total</span>
+                            <span class="gold-text" id="totalPrice">₦30,000</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gold/10 p-4 rounded-lg mb-6">
+                        <p class="text-xs text-center text-gold leading-relaxed">
+                            <strong>Note:</strong> A minimum upfront payment of <strong>70%</strong> is required to commence the project.
+                        </p>
+                    </div>
+
+                    <div class="mb-6 flex items-start gap-3">
+                        <input type="checkbox" id="tosConsent" class="mt-1 accent-[#D4AF37]">
+                        <label for="tosConsent" class="text-xs text-text-muted">
+                            I have read and agree to the <a href="https://forms.adekani.com.ng/terms%20of%20service" target="_blank" class="underline gold-text">Terms of Service</a>.
+                        </label>
+                    </div>
+
+                    <button onclick="sendWhatsApp()" class="w-full py-4 gold-bg text-dark-surface font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-gold/20">
+                        SEND REQUEST VIA WHATSAPP
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Catalog Management Modal -->
+    <div id="catalogModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-8 border-2 border-[#D4AF37]">
+            <p class="text-text-muted text-sm text-center mb-8"><span class = "font-bold" >IMPORTANT:<br><br></span>Adding a Property catalog Costs <span class = "font-bold gold-text" >₦10,000 </span>and it comes with 5 property slots.<br>Choose how you would like to add more properties in the <span class = "font-bold gold-text" >future</span></p>
+            
+            <div class="space-y-4">
+                <button onclick="setCatalogManagement('Pay-per-Update (₦5k/update)', this)" class="w-full text-left p-4 rounded-xl gold-border hover:bg-white/5 transition-all">
+                    <div class="font-bold">Pay-per-Update</div>
+                    <div class="text-xs text-text-muted">₦5,000 for every removal or addition of listings.</div>
+                </button>
+                
+                <button onclick="setCatalogManagement('Monthly Retainer (₦30k/mo)', this)" class="w-full text-left p-4 rounded-xl gold-border hover:bg-white/5 transition-all">
+                    <div class="font-bold">Monthly Retainer (₦30k / mo)</div>
+                    <div class="text-xs text-text-muted">Up to 25 updates/month + Basic SEO optimization for visibility.</div>
+                </button>
+
+                <button onclick="closeCatalogModal(true)" class="w-full text-left p-4 rounded-xl gold-border hover:bg-white/5 transition-all">
+                    No, I don't want a catalog for my properties.
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let state = {
+            pages: 1,
+            domainName: 'None',
+            domainPrice: 0,
+            hasCatalog: false,
+            catalogManagement: 'None',
+            totalPrice: 30000
+        };
+
+        function changePages(dir) {
+            state.pages = Math.max(1, state.pages + dir);
+            document.getElementById('pageCount').value = state.pages;
+            updatePricing();
+        }
+
+        function selectDomain(name, price, element) {
+            state.domainName = name;
+            state.domainPrice = price;
+            
+            // UI Update
+            document.querySelectorAll('.domain-card').forEach(card => card.classList.remove('gold-border-active'));
+            element.classList.add('gold-border-active');
+            
+            updatePricing();
+        }
+
+        function openCatalogModal() {
+            document.getElementById('catalogModal').classList.remove('hidden');
+        }
+
+        function closeCatalogModal(cancel = false) {
+            document.getElementById('catalogModal').classList.add('hidden');
+            if (cancel) {
+                toggleCatalog(false);
+            }
+        }
+
+        function setCatalogManagement(type, element) {
+            state.catalogManagement = type;
+            toggleCatalog(true);
+            closeCatalogModal();
+        }
+
+        function toggleCatalog(val) {
+            state.hasCatalog = val;
+            if (!val) state.catalogManagement = 'None';
+            
+            // UI Update
+            document.getElementById('catalogYes').classList.toggle('gold-border-active', val);
+            document.getElementById('catalogNo').classList.toggle('gold-border-active', !val);
+            
+            updatePricing();
+        }
+
+        function updatePricing() {
+            // Calculation
+            const pagePrice = 30000 + (Math.max(0, state.pages - 1) * 15000);
+            const catalogFee = state.hasCatalog ? 10000 : 0;
+            state.totalPrice = pagePrice + state.domainPrice + catalogFee;
+
+            // Update Summary UI
+            document.getElementById('summaryPages').innerText = state.pages;
+            document.getElementById('pricePages').innerText = `₦${pagePrice.toLocaleString()}`;
+            
+            document.getElementById('summaryDomain').innerText = state.domainName;
+            document.getElementById('priceDomain').innerText = `₦${state.domainPrice.toLocaleString()}`;
+            
+            document.getElementById('priceCatalog').innerText = `₦${catalogFee.toLocaleString()}`;
+            document.getElementById('totalPrice').innerText = `₦${state.totalPrice.toLocaleString()}`;
+        }
+
+        function sendWhatsApp() {
+            const tos = document.getElementById('tosConsent').checked;
+            if (!tos) {
+                alert("Please agree to the Terms of Service before proceeding.");
+                return;
+            }
+
+            const pageCost = 30000 + (Math.max(0, state.pages - 1) * 15000);
+            const catalogPriceText = state.hasCatalog ? "₦10,000" : "₦0";
+            
+            let message = `Hello Adekani! I would like to request a website project.\n\n`;
+            message += `*Project Breakdown:*\n`;
+            message += `- Number of Pages: ${state.pages} (₦${pageCost.toLocaleString()})\n`;
+            message += `- Domain Extension: ${state.domainName} (₦${state.domainPrice.toLocaleString()})\n`;
+            message += `- Property Catalog: ${state.hasCatalog ? 'Yes' : 'No'} (${catalogPriceText})\n`;
+            
+            if (state.hasCatalog) {
+                message += `- Catalog Management: ${state.catalogManagement}\n`;
+            }
+            
+            message += `\n*TOTAL QUOTE: ₦${state.totalPrice.toLocaleString()}*\n`;
+            message += `----------------------------\n`;
+            message += `- I have read and agree to the Terms of Service as stated: https://forms.adekani.com.ng/terms%20of%20service \n`;
+            message += `- I understand that a minimum upfront payment of 70% (₦${(state.totalPrice * 0.7).toLocaleString()}) is required to start this project.\n`;
+            message += `----------------------------\n`;
+
+            const encodedMsg = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/2348151884045?text=${encodedMsg}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Initialize state UI
+        updatePricing();
+    </script>
+</body>
+</html>
