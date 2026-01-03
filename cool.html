@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Start Real Estate</title>
+    
+    <!-- TAILWIND CSS: This handles all our styling (colors, layout, spacing) automatically -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SUPABASE: This connects us to the database -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- ==========================================
+       JAVASCRIPT LOGIC
+       This is the "Brain" of your website
+    ========================================== -->
+    <script type="module">
+        // --- CONFIGURATION ---
+        // IMPORTANT: Replace these with your actual keys from Supabase Dashboard -> Settings -> API
+        const SUPABASE_URL = 'https://gkhcnswvjuucgndgamih.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdraGNuc3d2anV1Y2duZGdhbWloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0MjU5ODcsImV4cCI6MjA4MzAwMTk4N30.sK6UQo9NsW3avaJrcQUY01KrtHkZ6FRr6OvlA1jDX-I';
+
+        // Initialize the Supabase connection
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // --- STATE VARIABLES ---
+        // These keep track of what the user is currently doing
+        let currentUser = null;
+
+        // --- DOM ELEMENTS ---
+        // We capture parts of the HTML page so we can change them with code
+        const navLoginBtn = document.getElementById('nav-login-btn');
+        const navLogoutBtn = document.getElementById('nav-logout-btn');
+        const adminSection = document.getElementById('admin-section');
+        const loginForm = document.getElementById('login-form');
+        const dashboard = document.getElementById('dashboard');
+        const propertyGrid = document.getElementById('property-grid');
+        const notification = document.getElementById('notification');
+
+        // --- INITIALIZATION ---
+        // This runs as soon as the page loads
+        window.addEventListener('load', async () => {
+            await checkUserStatus();
+            await fetchProperties();
+        });
+
+        // --- AUTHENTICATION FUNCTIONS (Login/Signup) ---
+
+        // Check if an admin is already logged in
+        async function checkUserStatus() {
+            const { data: { session } } = await supabase.auth.getSession();
+            currentUser = session?.user;
+            updateUI();
+        }
+
+        // Handle the Login/Signup Button Click
+        window.handleAuth = async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const type = event.submitter.value; // Did they click "Login" or "Signup"?
+
+            let error = null;
+
+            if (type === 'signup') {
+                // Try to create a new user
+                const response = await supabase.auth.signUp({ email, password });
+                error = response.error;
+                if (!error) showNotification("Account created! Please log in.", "green");
+            } else {
+                // Try to log in
+                const response = await supabase.auth.signInWithPassword({ email, password });
+                error = response.error;
+            }
+
+            if (error) {
+                showNotification(error.message, "red");
+            } else {
+                // If successful, reload page state
+                await checkUserStatus();
+                // Clear form
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+            }
+        };
+
+        // Handle Logout
+        window.handleLogout = async () => {
+            await supabase.auth.signOut();
+            await checkUserStatus();
+            showNotification("Logged out successfully", "blue");
+        };
+
+        // Update what is visible on the screen based on login status
+        function updateUI() {
+            if (currentUser) {
+                navLoginBtn.classList.add('hidden');
+                navLogoutBtn.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+            } else {
+                navLoginBtn.classList.remove('hidden');
+                navLogoutBtn.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+            }
+        }
+
+        // --- PROPERTY FUNCTIONS (Read, Add, Delete) ---
+
+        // 1. Fetch properties from database and show on homepage
+        async function fetchProperties() {
+            propertyGrid.innerHTML = '<p class="text-center w-full col-span-3">Loading properties...</p>';
+            
+            // "select *" means "get everything" from the 'properties' table
+            const { data, error } = await supabase
+                .from('properties')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching:', error);
+                return;
+            }
+
+            // Clear loading text
+            propertyGrid.innerHTML = '';
+
+            // Loop through each property found and create HTML for it
+            data.forEach(property => {
+                const card = `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <img src="${property.image_url || 'https://via.placeholder.com/400x300?text=No+Image'}" 
+                             alt="${property.title}" 
+                             class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold mb-2 text-gray-800">${property.title}</h3>
+                            <p class="text-green-600 font-bold text-lg mb-2">$${property.price.toLocaleString()}</p>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${property.description}</p>
+                            ${currentUser && currentUser.id === property.user_id ? 
+                                `<button onclick="deleteProperty(${property.id})" class="text-red-500 text-xs hover:underline">Delete Listing</button>` 
+                                : ''}
+                        </div>
+                    </div>
+                `;
+                propertyGrid.innerHTML += card;
+            });
+        }
+
+        // 2. Add a new property (Admin only)
+        window.handleAddProperty = async (event) => {
+            event.preventDefault();
+            const title = document.getElementById('prop-title').value;
+            const price = document.getElementById('prop-price').value;
+            const desc = document.getElementById('prop-desc').value;
+            const fileInput = document.getElementById('prop-image');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showNotification("Please select an image!", "red");
+                return;
+            }
+
+            showNotification("Uploading...", "blue");
+
+            try {
+                // Step A: Upload Image to Storage Bucket
+                // We create a unique name using Date.now() so files don't overwrite each other
+                const fileName = `${Date.now()}-${file.name}`;
+                const { data: uploadData, error: uploadError } = await supabase
+                    .storage
+                    .from('property-images')
+                    .upload(fileName, file);
+
+                if (uploadError) throw uploadError;
+
+                // Step B: Get the Public URL of that image
+                const { data: { publicUrl } } = supabase
+                    .storage
+                    .from('property-images')
+                    .getPublicUrl(fileName);
+
+                // Step C: Save details to Database
+                const { error: dbError } = await supabase
+                    .from('properties')
+                    .insert([{
+                        title: title,
+                        price: price,
+                        description: desc,
+                        image_url: publicUrl,
+                        user_id: currentUser.id
+                    }]);
+
+                if (dbError) throw dbError;
+
+                showNotification("Property added successfully!", "green");
+                
+                // Reset form and refresh list
+                event.target.reset();
+                fetchProperties();
+
+            } catch (error) {
+                showNotification(error.message, "red");
+            }
+        };
+
+        // 3. Delete a property
+        window.deleteProperty = async (id) => {
+            if(!confirm("Are you sure you want to delete this listing?")) return;
+
+            const { error } = await supabase
+                .from('properties')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showNotification("Error deleting: " + error.message, "red");
+            } else {
+                showNotification("Property deleted.", "blue");
+                fetchProperties();
+            }
+        };
+
+        // --- UTILITY ---
+        // A simple toast message helper
+        function showNotification(msg, color) {
+            notification.innerText = msg;
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white font-bold transition-opacity duration-500 bg-${color}-500`;
+            notification.style.opacity = '1';
+            setTimeout(() => { notification.style.opacity = '0'; }, 3000);
+        }
+
+        // Navigation Toggles
+        window.toggleAdmin = () => {
+            adminSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+
+    <!-- ==========================================
+       HTML STRUCTURE (The Visuals)
+    ========================================== -->
+
+    <!-- Notification Toast -->
+    <div id="notification" class="fixed bottom-4 right-4 opacity-0 pointer-events-none z-50"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-900 text-white p-4 shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold cursor-pointer" onclick="window.scrollTo(0,0)">🏠 FreshStart Realty</h1>
+            <div>
+                <button onclick="toggleAdmin()" class="mr-4 hover:text-blue-200">Admin Panel</button>
+                <span id="nav-login-btn" class="text-sm bg-blue-700 px-3 py-1 rounded">Guest</span>
+                <button id="nav-logout-btn" onclick="handleLogout()" class="hidden text-sm bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-blue-800 text-white py-20 text-center">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold mb-4">Find Your Dream Home</h2>
+            <p class="text-xl text-blue-200">Browsing the best properties in town.</p>
+        </div>
+    </header>
+
+    <!-- Main Content: Property Listings -->
+    <main class="container mx-auto px-4 py-12 min-h-screen">
+        <h3 class="text-2xl font-bold mb-6 border-b pb-2 border-gray-200">Latest Listings</h3>
+        
+        <!-- The Grid where properties will be injected by JavaScript -->
+        <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Properties will appear here -->
+        </div>
+    </main>
+
+    <!-- Admin Section -->
+    <section id="admin-section" class="bg-gray-200 py-12 border-t-4 border-blue-900">
+        <div class="container mx-auto px-4 max-w-2xl">
+            <h3 class="text-3xl font-bold text-center mb-8 text-blue-900">Admin Dashboard</h3>
+
+            <!-- 1. LOGIN / SIGNUP FORM -->
+            <div id="login-form" class="bg-white p-8 rounded-lg shadow-lg">
+                <h4 class="text-xl font-bold mb-4 text-center">Admin Access</h4>
+                <p class="text-sm text-gray-500 mb-6 text-center">Enter details to Login or Create new admin account</p>
+                
+                <form onsubmit="handleAuth(event)" class="space-y-4">
+                    <input type="email" id="email" placeholder="Email Address" required 
+                           class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="password" placeholder="Password" required 
+                           class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    
+                    <div class="flex gap-4">
+                        <button type="submit" name="action" value="login" 
+                                class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-bold">
+                            Login
+                        </button>
+                        <button type="submit" name="action" value="signup" 
+                                class="flex-1 bg-gray-600 text-white py-2 rounded hover:bg-gray-700 font-bold">
+                            Sign Up
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 2. DASHBOARD (Hidden until logged in) -->
+            <div id="dashboard" class="hidden bg-white p-8 rounded-lg shadow-lg border-2 border-green-500">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="text-xl font-bold text-green-700">Add New Property</h4>
+                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Admin Mode Active</span>
+                </div>
+
+                <form onsubmit="handleAddProperty(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Property Title</label>
+                        <input type="text" id="prop-title" placeholder="e.g. Modern Villa" required
+                               class="w-full p-2 border rounded">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Price ($)</label>
+                        <input type="number" id="prop-price" placeholder="500000" required
+                               class="w-full p-2 border rounded">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Description</label>
+                        <textarea id="prop-desc" rows="3" placeholder="Describe the house..." required
+                                  class="w-full p-2 border rounded"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Property Image</label>
+                        <input type="file" id="prop-image" accept="image/*" required
+                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 font-bold shadow-md">
+                        Upload & Add Listing
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-6 mt-12">
+        <p>&copy; 2026 FreshStart Real Estate. Built with HTML & Supabase.</p>
+    </footer>
+
+</body>
+</html>
