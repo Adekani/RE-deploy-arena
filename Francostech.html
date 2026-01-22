@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRANCOSTECH | Premium Renewable Energy</title>
+    <meta name="description" content="Powering the future with ultra-modern solar solutions. Residential, Commercial, and Off-Grid energy systems.">
+    
+    <!-- Fonts: Manrope (Modern, Clean) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                    },
+                    colors: {
+                        solar: {
+                            gold: '#FFD700',
+                            dark: '#0B0F19',
+                            slate: '#1A202C',
+                            accent: '#00C9A7'
+                        }
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "linear-gradient(to right bottom, rgba(11, 15, 25, 0.9), rgba(11, 15, 25, 0.7)), url('https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
+                        'luxury-gradient': 'linear-gradient(135deg, #0B0F19 0%, #1A202C 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Utilities */
+        body {
+            background-color: #0B0F19; /* Deep Dark Background */
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-nav {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Page Transitions */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFD700;
+        }
+
+        /* Text Gradients */
+        .text-gradient {
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .text-gradient-gold {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Image Hover Zoom */
+        .img-zoom-container {
+            overflow: hidden;
+        }
+        .img-zoom-container img {
+            transition: transform 0.7s ease;
+        }
+        .img-zoom-container:hover img {
+            transform: scale(1.1);
+        }
+
+
+    </style>
+</head>
+<body class="antialiased selection:bg-solar-gold selection:text-solar-dark">
+
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer" onclick="router('home')">
+                    <span class="text-2xl font-bold tracking-tighter text-white">
+                        FRANCOSTECH<span class="text-solar-gold">.</span>
+                    </span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a onclick="router('home')" class="nav-link cursor-pointer text-sm font-medium text-white hover:text-solar-gold transition-colors duration-300">Home</a>
+                        <a onclick="router('about')" class="nav-link cursor-pointer text-sm font-medium text-gray-300 hover:text-solar-gold transition-colors duration-300">About</a>
+                        <a onclick="router('services')" class="nav-link cursor-pointer text-sm font-medium text-gray-300 hover:text-solar-gold transition-colors duration-300">Services</a>
+                        <a onclick="router('projects')" class="nav-link cursor-pointer text-sm font-medium text-gray-300 hover:text-solar-gold transition-colors duration-300">Projects</a>
+                        <a onclick="router('contact')" class="px-5 py-2.5 rounded-full bg-white text-solar-dark font-bold text-sm hover:bg-solar-gold transition-all duration-300 cursor-pointer shadow-lg shadow-white/10">Get Started</a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div class="hidden md:hidden bg-solar-dark border-b border-gray-800 absolute w-full" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a onclick="router('home'); toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-800">Home</a>
+                <a onclick="router('about'); toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-800">About</a>
+                <a onclick="router('services'); toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-800">Services</a>
+                <a onclick="router('projects'); toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-800">Projects</a>
+                <a onclick="router('contact'); toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-solar-gold hover:bg-gray-800">Contact Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app" class="pt-0">
+        
+        <!-- ==================== HOME PAGE ==================== -->
+        <section id="home" class="page-section active">
+            <!-- Hero -->
+            <div class="relative h-screen flex items-center justify-center overflow-hidden">
+                <!-- Background Image with Overlay -->
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover opacity-60" alt="Solar Panels">
+                    <div class="absolute inset-0 bg-gradient-to-t from-solar-dark via-solar-dark/50 to-transparent"></div>
+                </div>
+
+                <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div data-aos="fade-up" data-aos-duration="1000">
+                        <span class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-xs font-semibold tracking-widest uppercase mb-6 text-solar-gold">The Future is Renewable</span>
+                        <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                            Power Your Future <br>
+                            <span class="text-gradient-gold">With Pure Energy</span>
+                        </h1>
+                        <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-300 font-light">
+                            Experience the pinnacle of energy independence. Reliable, efficient, and sustainable solar solutions engineered for modern living.
+                        </p>
+                        <div class="mt-10 flex justify-center gap-4">
+                            <button onclick="router('contact')" class="px-8 py-4 rounded-full bg-solar-gold text-solar-dark font-bold text-lg hover:bg-white transition-all duration-300 shadow-lg shadow-solar-gold/20 transform hover:-translate-y-1">
+                                Get a Quote
+                            </button>
+                            <button onclick="router('projects')" class="px-8 py-4 rounded-full glass text-white font-semibold text-lg hover:bg-white/10 transition-all duration-300">
+                                View Our Work
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gray-400">
+                    <i class="fas fa-chevron-down text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Stats Section (Counter Animation) -->
+            <div class="py-20 bg-solar-dark border-y border-white/5">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                        <div class="p-6" data-aos="fade-up" data-aos-delay="0">
+                            <h3 class="text-4xl md:text-5xl font-bold text-white mb-2 counter" data-target="5000">0</h3>
+                            <p class="text-sm text-gray-400 uppercase tracking-widest">Panels Installed</p>
+                        </div>
+                        <div class="p-6" data-aos="fade-up" data-aos-delay="100">
+                            <h3 class="text-4xl md:text-5xl font-bold text-white mb-2 counter" data-target="1200">0</h3>
+                            <p class="text-sm text-gray-400 uppercase tracking-widest">Happy Clients</p>
+                        </div>
+                        <div class="p-6" data-aos="fade-up" data-aos-delay="200">
+                            <h3 class="text-4xl md:text-5xl font-bold text-white mb-2 counter" data-target="25">0</h3>
+                            <p class="text-sm text-gray-400 uppercase tracking-widest">Years Experience</p>
+                        </div>
+                        <div class="p-6" data-aos="fade-up" data-aos-delay="300">
+                            <h3 class="text-4xl md:text-5xl font-bold text-white mb-2 counter" data-target="100">0</h3>
+                            <p class="text-sm text-gray-400 uppercase tracking-widest">% Satisfaction</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Choose Us Preview -->
+            <div class="py-24 bg-[#0F1421]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold mb-4">Why FRANCOSTECH?</h2>
+                        <div class="w-20 h-1 bg-solar-gold mx-auto"></div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Card 1 -->
+                        <div class="glass p-8 rounded-2xl hover:bg-white/5 transition-all duration-300" data-aos="fade-up" data-aos-delay="0">
+                            <div class="w-14 h-14 bg-solar-gold/20 rounded-full flex items-center justify-center mb-6 text-solar-gold text-2xl">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4">Eco-Conscious</h3>
+                            <p class="text-gray-400 leading-relaxed">Reduce your carbon footprint immediately. Our systems are designed to maximize output while minimizing environmental impact.</p>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="glass p-8 rounded-2xl hover:bg-white/5 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+                            <div class="w-14 h-14 bg-blue-500/20 rounded-full flex items-center justify-center mb-6 text-blue-400 text-2xl">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4">Maximized ROI</h3>
+                            <p class="text-gray-400 leading-relaxed">Lower electricity bills significantly. Our high-efficiency panels ensure your investment pays off faster than the competition.</p>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="glass p-8 rounded-2xl hover:bg-white/5 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                            <div class="w-14 h-14 bg-purple-500/20 rounded-full flex items-center justify-center mb-6 text-purple-400 text-2xl">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4">25-Year Warranty</h3>
+                            <p class="text-gray-400 leading-relaxed">Peace of mind comes standard. We stand by our installations with industry-leading warranties and support.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ABOUT PAGE ==================== -->
+        <section id="about" class="page-section">
+            <div class="pt-32 pb-20 bg-solar-dark">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-2 gap-16 items-center">
+                        <div data-aos="fade-right">
+                            <h2 class="text-4xl md:text-5xl font-bold mb-6">Leading Solar Solutions, <br><span class="text-solar-gold">Built on Trust.</span></h2>
+                            <p class="text-lg text-gray-400 mb-6 leading-relaxed">
+                                At FRANCOSTECH, we aren't just installing panels; we are engineering the future of energy distribution. Founded on the principles of efficiency and accessibility, we have grown into a premier provider of renewable energy systems.
+                            </p>
+                            <p class="text-lg text-gray-400 mb-8 leading-relaxed">
+                                Our team comprises certified engineers, visionary designers, and dedicated support staff working in unison to deliver off-grid and on-grid solutions that stand the test of time.
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="border-l-4 border-solar-gold pl-4">
+                                    <h4 class="text-white font-bold text-lg">Our Mission</h4>
+                                    <p class="text-sm text-gray-500">To empower homes and businesses with clean, reliable, and independent energy sources.</p>
+                                </div>
+                                <div class="border-l-4 border-white pl-4">
+                                    <h4 class="text-white font-bold text-lg">Our Vision</h4>
+                                    <p class="text-sm text-gray-500">A sustainable world powered by the sun, one rooftop at a time.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative" data-aos="fade-left">
+                            <div class="absolute -inset-4 bg-white/20 rounded-2xl blur-lg"></div>
+                            <img src="https://images.unsplash.com/photo-1624397640148-949b1732bb0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Team installing solar" class="relative rounded-2xl shadow-2xl w-full object-cover h-[500px]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SERVICES PAGE ==================== -->
+        <section id="services" class="page-section">
+            <div class="pt-32 pb-20 bg-[#0F1421]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <span class="text-solar-gold font-bold tracking-widest uppercase text-sm">Our Expertise</span>
+                        <h2 class="text-4xl font-bold mt-2">Comprehensive Energy Solutions</h2>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Service 1 -->
+                        <div class="group relative overflow-hidden rounded-3xl h-80" data-aos="fade-up">
+                            <img src="https://images.unsplash.com/photo-1611365892117-00ac5ef43c90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Residential Solar">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent p-8 flex flex-col justify-end">
+                                <i class="fas fa-home text-solar-gold text-3xl mb-3"></i>
+                                <h3 class="text-2xl font-bold text-white mb-2">Residential Solar</h3>
+                                <p class="text-gray-300 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">Reduce electricity bills and increase home value with our sleek, high-efficiency rooftop systems.</p>
+                            </div>
+                        </div>
+
+                        <!-- Service 2 -->
+                        <div class="group relative overflow-hidden rounded-3xl h-80" data-aos="fade-up" data-aos-delay="100">
+                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Commercial Solar">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent p-8 flex flex-col justify-end">
+                                <i class="fas fa-building text-solar-gold text-3xl mb-3"></i>
+                                <h3 class="text-2xl font-bold text-white mb-2">Commercial Systems</h3>
+                                <p class="text-gray-300 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">Scale up your sustainability. Industrial-grade arrays designed to keep your business running efficiently.</p>
+                            </div>
+                        </div>
+
+                        <!-- Service 3 -->
+                        <div class="group relative overflow-hidden rounded-3xl h-80" data-aos="fade-up" data-aos-delay="200">
+                            <img src="https://images.unsplash.com/photo-1566093097221-ac2335b09e70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Off Grid">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent p-8 flex flex-col justify-end">
+                                <i class="fas fa-battery-full text-solar-gold text-3xl mb-3"></i>
+                                <h3 class="text-2xl font-bold text-white mb-2">Off-Grid Solutions</h3>
+                                <p class="text-gray-300 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">Total independence. Battery storage and advanced inverters for remote locations with no grid access.</p>
+                            </div>
+                        </div>
+
+                        <!-- Service 4 -->
+                        <div class="group relative overflow-hidden rounded-3xl h-80" data-aos="fade-up" data-aos-delay="300">
+                            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Maintenance">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent p-8 flex flex-col justify-end">
+                                <i class="fas fa-tools text-solar-gold text-3xl mb-3"></i>
+                                <h3 class="text-2xl font-bold text-white mb-2">Maintenance & Care</h3>
+                                <p class="text-gray-300 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">Protect your investment. Annual cleaning, system health checks, and rapid repair services.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PROJECTS PAGE ==================== -->
+        <section id="projects" class="page-section">
+            <div class="pt-32 pb-20 bg-solar-dark">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                        <div>
+                            <h2 class="text-4xl font-bold mb-2">Recent Installs</h2>
+                            <p class="text-gray-400">See how we're transforming skylines.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Project 1 -->
+                        <div class="img-zoom-container rounded-xl overflow-hidden shadow-xl" data-aos="fade-up">
+                            <div class="relative h-64">
+                                <img src="https://images.unsplash.com/photo-1613665813446-82a78c468a1d?q=80&w=2058&auto=format&fit=crop" class="w-full h-full object-cover" alt="Project 1">
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                    <h4 class="text-white font-bold">The Horizon Residence</h4>
+                                    <p class="text-xs text-gray-300">12kW System • Residential</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Project 2 -->
+                        <div class="img-zoom-container rounded-xl overflow-hidden shadow-xl" data-aos="fade-up" data-aos-delay="100">
+                            <div class="relative h-64">
+                                <img src="https://images.unsplash.com/photo-1624397640148-949b1732bb0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Project 2">
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                    <h4 class="text-white font-bold">TechPark Office</h4>
+                                    <p class="text-xs text-gray-300">500kW Array • Commercial</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Project 3 -->
+                        <div class="img-zoom-container rounded-xl overflow-hidden shadow-xl" data-aos="fade-up" data-aos-delay="200">
+                            <div class="relative h-64">
+                                <img src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?q=80&w=1932&auto=format&fit=crop" class="w-full h-full object-cover" alt="Project 3">
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                    <h4 class="text-white font-bold">Lakeside Retreat</h4>
+                                    <p class="text-xs text-gray-300">Off-Grid Hybrid • Specialty</p>
+                                </div>
+                            </div>
+                        </div>
+                         <!-- Project 4 -->
+                         <div class="img-zoom-container rounded-xl overflow-hidden shadow-xl" data-aos="fade-up">
+                            <div class="relative h-64">
+                                <img src="https://images.unsplash.com/photo-1566093097221-ac2335b09e70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Project 4">
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                    <h4 class="text-white font-bold">Eco-Village 1</h4>
+                                    <p class="text-xs text-gray-300">Community Grid • Residential</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Project 5 -->
+                        <div class="img-zoom-container rounded-xl overflow-hidden shadow-xl" data-aos="fade-up" data-aos-delay="100">
+                            <div class="relative h-64">
+                                <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Project 5">
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                    <h4 class="text-white font-bold">Mountain Lodge</h4>
+                                    <p class="text-xs text-gray-300">Solar + Wind • Off-Grid</p>
+                                </div>
+                            </div>
+                        </div>
+                         <!-- Project 6 -->
+                         <div class="img-zoom-container rounded-xl overflow-hidden shadow-xl" data-aos="fade-up" data-aos-delay="200">
+                            <div class="relative h-64">
+                                <img src="https://images.unsplash.com/photo-1594818379496-da1e345b0ded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Project 6">
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                    <h4 class="text-white font-bold">Urban Retrofit</h4>
+                                    <p class="text-xs text-gray-300">18kW System • Commercial</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CONTACT PAGE ==================== -->
+        <section id="contact" class="page-section">
+            <div class="pt-32 pb-20 bg-[#0F1421]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-12">
+                        <!-- Contact Info -->
+                        <div data-aos="fade-right">
+                            <h2 class="text-4xl font-bold mb-6">Let's Electrify <br> Your Future.</h2>
+                            <p class="text-gray-400 mb-8 leading-relaxed">
+                                Ready to make the switch? Our energy consultants are standing by to provide a free assessment of your property and custom-tailor a solar solution for you.
+                            </p>
+                            
+                            <div class="space-y-6">
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-solar-gold/10 rounded-full flex items-center justify-center text-solar-gold mt-1">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h4 class="text-white font-bold">Headquarters</h4>
+                                        <p class="text-gray-400">101 Solar Avenue, Renewable Tech Park<br> Nigeria</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-solar-gold/10 rounded-full flex items-center justify-center text-solar-gold mt-1">
+                                        <i class="fas fa-phone-alt"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h4 class="text-white font-bold">Phone</h4>
+                                        <p class="text-gray-400">+234 800 SOLAR</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-solar-gold/10 rounded-full flex items-center justify-center text-solar-gold mt-1">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h4 class="text-white font-bold">Email</h4>
+                                        <p class="text-gray-400">hello@solar.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Form -->
+                        <div class="glass p-8 rounded-2xl" data-aos="fade-left">
+                            <form onsubmit="event.preventDefault(); alert('Thank you for contacting FRANCOSTECH. We will be in touch shortly!');">
+                                <div class="grid grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-gray-400 text-xs uppercase tracking-wide mb-2">First Name</label>
+                                        <input type="text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-solar-gold transition-colors" placeholder="John">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-400 text-xs uppercase tracking-wide mb-2">Last Name</label>
+                                        <input type="text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-solar-gold transition-colors" placeholder="Doe">
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-gray-400 text-xs uppercase tracking-wide mb-2">Email Address</label>
+                                    <input type="email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-solar-gold transition-colors" placeholder="john@example.com">
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-gray-400 text-xs uppercase tracking-wide mb-2">Service Interested In</label>
+                                    <select class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-solar-gold transition-colors">
+                                        <option class="bg-solar-dark text-gray-400">Select an option</option>
+                                        <option class="bg-solar-dark">Residential Solar</option>
+                                        <option class="bg-solar-dark">Commercial Solar</option>
+                                        <option class="bg-solar-dark">Off-Grid System</option>
+                                        <option class="bg-solar-dark">Maintenance</option>
+                                    </select>
+                                </div>
+                                <div class="mb-8">
+                                    <label class="block text-gray-400 text-xs uppercase tracking-wide mb-2">Message</label>
+                                    <textarea class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-solar-gold transition-colors h-32" placeholder="Tell us about your energy needs..."></textarea>
+                                </div>
+                                <button class="w-full bg-solar-gold text-solar-dark font-bold py-4 rounded-lg hover:bg-white transition-colors duration-300">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <span class="text-2xl font-bold tracking-tighter text-white block mb-4">
+                        FRANCOSTECH<span class="text-solar-gold">.</span>
+                    </span>
+                    <p class="text-gray-500 text-sm">Empowering the world with sustainable energy solutions designed for the future.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a onclick="router('home')" class="hover:text-solar-gold cursor-pointer">Home</a></li>
+                        <li><a onclick="router('about')" class="hover:text-solar-gold cursor-pointer">About Us</a></li>
+                        <li><a onclick="router('services')" class="hover:text-solar-gold cursor-pointer">Services</a></li>
+                        <li><a onclick="router('projects')" class="hover:text-solar-gold cursor-pointer">Projects</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Services</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>Residential Installation</li>
+                        <li>Commercial Solutions</li>
+                        <li>Off-Grid Systems</li>
+                        <li>Panel Maintenance</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-solar-gold hover:text-solar-dark transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-solar-gold hover:text-solar-dark transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-solar-gold hover:text-solar-dark transition-colors"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-600 text-xs">&copy; 2024 FRANCOSTECH. All rights reserved.</p>
+                <a href="https://adekani.com.ng" class="text-gray-600 text-xs hover:text-solar-gold mt-2 md:mt-0 transition-colors">Built by Adekani</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Init AOS Animation Library
+        AOS.init({
+            once: true,
+            offset: 50,
+            duration: 800,
+        });
+
+        // Loader
+        window.addEventListener('load', () => {
+    if(document.getElementById('home').classList.contains('active')) {
+        runCounters();
+    }
+});
+
+        // Simple Router to simulate Multi-page
+        function router(pageId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            const target = document.getElementById(pageId);
+            if(target) {
+                target.classList.add('active');
+                window.scrollTo(0, 0); // Scroll to top
+                
+                // Refresh AOS animations
+                setTimeout(() => {
+                    AOS.refresh();
+                }, 100);
+
+                // Run counters if returning to home
+                if(pageId === 'home') {
+                    runCounters();
+                }
+            }
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg');
+                nav.style.background = 'rgba(11, 15, 25, 0.95)';
+            } else {
+                nav.classList.remove('shadow-lg');
+                nav.style.background = 'rgba(11, 15, 25, 0.85)';
+            }
+        });
+
+        // Animated Counters
+        function runCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const speed = 200; // The lower the slower
+                
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+                    
+                    if(count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                        if(target > 100) counter.innerText += '+';
+                        if(target === 100) counter.innerText += '%';
+                    }
+                };
+                updateCount();
+            });
+        }
+    </script>
+</body>
+  </html>
